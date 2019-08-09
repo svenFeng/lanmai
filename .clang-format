@@ -1,0 +1,18 @@
+BasedOnStyle: Google
+Standard: Cpp11
+SortIncludes: false
+SortUsingDeclarations: false
+AccessModifierOffset: -4
+PointerBindsToType: false
+DerivePointerBinding: false
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine : false
+AllowShortIfStatementsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: false
+AlignConsecutiveAssignments: true
+AlignEscapedNewlinesLeft: true
+AlignTrailingComments: true
+AlignOperands: true
+ColumnLimit: 120
+IndentWidth: 4
+TabWidth: 4

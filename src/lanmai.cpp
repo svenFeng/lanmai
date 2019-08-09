@@ -1,15 +1,15 @@
+#include <fcntl.h>
+#include <functional>
+#include <libevdev/libevdev-uinput.h>
+#include <libevdev/libevdev.h>
 #include <libudev.h>
+#include <map>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <string>
+#include <unistd.h>
 #include <vector>
-#include <functional>
-#include <map>
-#include <libevdev/libevdev.h>
-#include <libevdev/libevdev-uinput.h>
 
 #define MAX_KBD_DEVICES 100
 
@@ -175,9 +175,11 @@ int main(int argc, char *argv[]) {
     } else if (argc == 2) {
         global_log_level = std::stoi(argv[1]);
     }
-    if (global_log_level > 0) {
-        print_all_kbd_devices();
+    auto devices = get_kbd_devices();
+    if (devices.size() == 0) {
+        log(LL_DEBUG, "can't find out any key board devices");
+        return 0;
     }
-    grab("/dev/input/event3");
+    grab(devices[0]);
     return 0;
 }
