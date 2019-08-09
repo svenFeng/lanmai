@@ -15,6 +15,8 @@ Space l => Right
 + libudev
 
 # build and run
+```
 make
 sudo ./lanmai
+```
 
