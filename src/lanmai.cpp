@@ -38,6 +38,25 @@ int map(int code) {
     }
 }
 
+struct Group {
+    bool has_msc = false;
+    input_event msc;
+    input_event kbd;
+};
+
+void send(const struct libevdev_uinput *uinput_dev, unsigned int type, unsigned int code, int value) {
+    log(LL_DEBUG, "send: type:%d, code:%d, value:%d", type, code, value);
+    libevdev_uinput_write_event(uinput_dev, type, code, value);
+}
+
+void send_group(const struct libevdev_uinput *uinput_dev, Group group) {
+    if (group.has_msc) {
+        send(uinput_dev, group.msc.type, group.msc.code, group.msc.value);
+    }
+    send(uinput_dev, group.kbd.type, group.kbd.code, group.kbd.value);
+    send(uinput_dev, EV_SYN, SYN_REPORT, 0);
+}
+
 // based on https://gist.github.com/mmn80/4337126
 std::vector<std::string> get_kbd_devices() {
     std::vector<std::string> devnodes;
@@ -117,6 +136,7 @@ void grab(const std::string &path) {
 
     bool space_key_pressed = false;
     bool space_as_mk       = false;
+    Group group;
 
     while (true) {
         struct input_event input;
@@ -131,10 +151,29 @@ void grab(const std::string &path) {
             break;
         }
 
-        log(LL_DEBUG, "type:%d, code:%d, value:%d", input.type, input.code, input.value);
-        if (input.type == EV_MSC && input.code == MSC_SCAN && input.value == 57) {
+        log(LL_DEBUG, "accept: type:%d, code:%d, value:%d", input.type, input.code, input.value);
+        if (input.type == EV_MSC) {
+            group.has_msc = true;
+            group.msc     = input;
             continue;
         }
+        if (input.type == EV_KEY) {
+            group.kbd = input;
+            continue;
+        }
+        if (input.type != EV_SYN) {
+            log(LL_ERROR, "unexpected event type:%d", input.type);
+            exit(1);
+        }
+        input = group.kbd;
+        // Caps as Ctrl
+        if (input.type == EV_KEY && input.code == KEY_CAPSLOCK) {
+            group.kbd.code = KEY_LEFTCTRL;
+            send_group(uidev, group);
+            group.has_msc = false;
+            continue;
+        }
+        // space
         if (input.code == KEY_SPACE) {
             if (!space_key_pressed) {
                 if (input.value != 0) {
@@ -147,24 +186,40 @@ void grab(const std::string &path) {
                         space_as_mk = false;
                     } else {
                         log(LL_INFO, "SPACE");
-                        libevdev_uinput_write_event(uidev, EV_MSC, MSC_SCAN, KEY_SPACE);
-                        libevdev_uinput_write_event(uidev, EV_KEY, KEY_SPACE, 1);
-                        libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
-                        libevdev_uinput_write_event(uidev, EV_MSC, MSC_SCAN, KEY_SPACE);
-                        libevdev_uinput_write_event(uidev, EV_KEY, KEY_SPACE, 0);
+                        send(uidev, EV_MSC, MSC_SCAN, KEY_SPACE);
+                        send(uidev, EV_KEY, KEY_SPACE, 1);
+                        send(uidev, EV_SYN, SYN_REPORT, 0);
+                        send(uidev, EV_MSC, MSC_SCAN, KEY_SPACE);
+                        send(uidev, EV_KEY, KEY_SPACE, 0);
+                        send(uidev, EV_SYN, SYN_REPORT, 0);
                     }
                 }
             }
+            group.has_msc = false;
             continue;
         }
         int mc = map(input.code);
         if (mc != -1 && space_key_pressed) {
             space_as_mk = true;
             log(LL_INFO, "Arror: %d", input.code);
-            libevdev_uinput_write_event(uidev, EV_KEY, mc, input.value);
+            send(uidev, EV_MSC, MSC_SCAN, mc);
+            send(uidev, EV_KEY, mc, input.value);
+            send(uidev, EV_SYN, SYN_REPORT, 0);
+            group.has_msc = false;
             continue;
         }
-        libevdev_uinput_write_event(uidev, input.type, input.code, input.value);
+        if (mc == -1 && space_key_pressed) {
+            send(uidev, EV_MSC, MSC_SCAN, KEY_SPACE);
+            send(uidev, EV_KEY, KEY_SPACE, 1);
+            send(uidev, EV_SYN, SYN_REPORT, 0);
+            send(uidev, EV_MSC, MSC_SCAN, KEY_SPACE);
+            send(uidev, EV_KEY, KEY_SPACE, 0);
+            send(uidev, EV_SYN, SYN_REPORT, 0);
+            space_key_pressed = false;
+            space_as_mk       = false;
+        }
+        send_group(uidev, group);
+        group.has_msc = false;
     }
 }
 
@@ -179,6 +234,9 @@ int main(int argc, char *argv[]) {
     if (devices.size() == 0) {
         log(LL_DEBUG, "can't find out any key board devices");
         return 0;
+    }
+    for (auto &&d : devices) {
+        log(LL_INFO, "keyboard device:%s", d.c_str());
     }
     grab(devices[0]);
     return 0;

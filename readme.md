@@ -1,13 +1,14 @@
 # lanmai
-lanmai is a software mapping Space+hjkl to Arror keys in Linux.
+lanmai is a key mapping software in Linux.
 
 # mapping keys
 ```
-Sapce   => Space
-Space h => Left
-Space j => Down
-Space k => Up
-Space l => Right
+CapsLock => Left Ctrl
+Sapce    => Space
+Space h  => Left
+Space j  => Down
+Space k  => Up
+Space l  => Right
 ```
 
 # dependencies
@@ -20,3 +21,6 @@ make
 sudo ./lanmai
 ```
 
+# TODO
++ multi keyboard devices
++ better command arguments parser
