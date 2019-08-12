@@ -5,6 +5,7 @@ lanmai is a key mapping software in Linux.
 ```
 CapsLock => Left Ctrl
 Sapce    => Space
+Sapce e  => Esc
 Space h  => Left
 Space j  => Down
 Space k  => Up
@@ -24,3 +25,4 @@ sudo ./lanmai
 # TODO
 + multi keyboard devices
 + better command arguments parser
++ verify it in Coq/TLA+
