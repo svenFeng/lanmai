@@ -129,7 +129,6 @@ void grab(const std::string &path) {
     bool space_key_pressed = false;
     bool space_as_mk       = false;
     int pressed_count      = 0;
-    input_event kbd;
 
     while (true) {
         struct input_event input;
@@ -145,32 +144,28 @@ void grab(const std::string &path) {
         }
 
         log(LL_DEBUG, "accept: type:%d, code:%d, value:%d", input.type, input.code, input.value);
-        if (input.type == EV_KEY) {
-            kbd = input;
+        if (input.type != EV_KEY) {
             continue;
         }
-        if (input.type != EV_SYN) {
-            continue;
-        }
-        if (kbd.value == 1) {
+        if (input.value == 1) {
             pressed_count++;
-        } else if (kbd.value == 0) {
+        } else if (input.value == 0) {
             if (pressed_count > 0) {
                 pressed_count--;
             }
         }
         // Caps as Ctrl
-        if (kbd.type == EV_KEY && kbd.code == KEY_CAPSLOCK) {
-            kbd.code = KEY_LEFTCTRL;
-            send(uidev, kbd);
+        if (input.type == EV_KEY && input.code == KEY_CAPSLOCK) {
+            input.code = KEY_LEFTCTRL;
+            send(uidev, input);
             continue;
         }
         // space
         log(LL_DEBUG, "space_key_pressed: %d, pressed_count:%d, space_as_mk:%d", space_key_pressed, pressed_count,
             space_as_mk);
-        if (kbd.code == KEY_SPACE) {
+        if (input.code == KEY_SPACE) {
             if (space_key_pressed) {
-                if (kbd.value == 0) {
+                if (input.value == 0) {
                     space_key_pressed = false;
                     if (space_as_mk) {
                         space_as_mk = false;
@@ -182,28 +177,28 @@ void grab(const std::string &path) {
                 }
                 continue;
             }
-            if (kbd.value == 1 && pressed_count == 1) {
+            if (input.value == 1 && pressed_count == 1) {
                 space_key_pressed = true;
                 continue;
             }
         }
-        int mc = map(kbd.code);
+        int mc = map(input.code);
         if (mc != -1) {
             static std::set<unsigned int> set{};
             if (space_key_pressed) {
-                if (kbd.value == 1) {
+                if (input.value == 1) {
                     space_as_mk = true;
-                    set.insert(kbd.code);
-                } else if (kbd.value == 0) {
-                    set.erase(kbd.code);
+                    set.insert(input.code);
+                } else if (input.value == 0) {
+                    set.erase(input.code);
                 }
-                send(uidev, EV_KEY, mc, kbd.value);
+                send(uidev, EV_KEY, mc, input.value);
                 continue;
-            } else if (set.find(kbd.code) != set.end()) {
-                if (kbd.value == 0) {
-                    set.erase(kbd.code);
+            } else if (set.find(input.code) != set.end()) {
+                if (input.value == 0) {
+                    set.erase(input.code);
                 }
-                send(uidev, EV_KEY, mc, kbd.value);
+                send(uidev, EV_KEY, mc, input.value);
                 continue;
             }
         }
@@ -212,7 +207,7 @@ void grab(const std::string &path) {
             send(uidev, EV_KEY, KEY_SPACE, 0);
             space_key_pressed = false;
         }
-        send(uidev, kbd);
+        send(uidev, input);
     }
 }
 
