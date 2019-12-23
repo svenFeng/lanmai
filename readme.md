@@ -10,6 +10,7 @@ Space h  => Left
 Space j  => Down
 Space k  => Up
 Space l  => Right
+Space w  => Window
 ```
 
 # dependencies

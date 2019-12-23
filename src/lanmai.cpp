@@ -49,6 +49,8 @@ int map(int code) {
             return KEY_RIGHT;
         case KEY_E:
             return KEY_ESC;
+        case KEY_W:
+            return KEY_LEFTMETA;
         default:
             return -1;
     }
@@ -195,12 +197,14 @@ void grab(const std::string &path) {
                 continue;
             }
         }
+        if (space_key_pressed) {
+            space_as_mk = true;
+        }
         int mc = map(input.code);
         if (mc != -1) {
             static std::set<unsigned int> set{};
             if (space_key_pressed) {
                 if (input.value == 1) {
-                    space_as_mk = true;
                     set.insert(input.code);
                 } else if (input.value == 0) {
                     set.erase(input.code);
@@ -215,12 +219,9 @@ void grab(const std::string &path) {
                 continue;
             }
         }
-        if (mc == -1 && space_key_pressed && !space_as_mk) {
-            send(uidev, EV_KEY, KEY_SPACE, 1);
-            send(uidev, EV_KEY, KEY_SPACE, 0);
-            space_key_pressed = false;
+        if (!space_as_mk) {
+            send(uidev, input);
         }
-        send(uidev, input);
     }
 }
 
