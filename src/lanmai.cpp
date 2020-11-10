@@ -11,31 +11,10 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+#include "../lib/log.h"
+#include "../lib/common.h"
 
 #define MAX_KBD_DEVICES 100
-
-static int8_t global_log_level = 0;
-enum LogLevel : int8_t { LL_ERROR = 0, LL_INFO = 1, LL_DEBUG = 2 };
-
-std::string ll_name(LogLevel log_level) {
-    switch (log_level) {
-        case LL_ERROR:
-            return "ERROR";
-        case LL_INFO:
-            return "INFO";
-        case LL_DEBUG:
-            return "DEBUG";
-    }
-}
-
-#define log(log_level, fmt, args...)                                                                  \
-    do {                                                                                              \
-        if (log_level <= global_log_level) {                                                          \
-            printf("[%s:%d, %s][%s] ", __FILE__, __LINE__, __FUNCTION__, ll_name(log_level).c_str()); \
-            printf(fmt, ##args);                                                                      \
-            printf("\n");                                                                             \
-        }                                                                                             \
-    } while (false)
 
 int map(int code) {
     switch (code) {
@@ -101,12 +80,6 @@ void print_all_kbd_devices() {
         log(LL_INFO, "kbd: %s", d.c_str());
     }
 }
-
-struct Defer {
-    std::function<void()> f;
-    Defer(std::function<void()> f) : f(f) {}
-    ~Defer() { f(); }
-};
 
 void grab(const std::string &path) {
     int fd = open(path.c_str(), O_RDONLY);
