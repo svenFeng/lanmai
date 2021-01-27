@@ -1,6 +1,9 @@
+#ifndef LANMAI_LOG_H
+#define LANMAI_LOG_H
+
 #include <string>
 
-static int8_t global_log_level = 0;
+inline int8_t GLOBAL_LOG_LEVEL = 0;
 enum LogLevel : int8_t { LL_ERROR = 0, LL_INFO = 1, LL_DEBUG = 2 };
 
 inline std::string ll_name(LogLevel log_level) {
@@ -16,11 +19,13 @@ inline std::string ll_name(LogLevel log_level) {
     }
 }
 
-#define log(log_level, fmt, args...)                                                                  \
+#define LLOG(log_level, fmt, args...)                                                                 \
     do {                                                                                              \
-        if (log_level <= global_log_level) {                                                          \
+        if (log_level <= GLOBAL_LOG_LEVEL) {                                                          \
             printf("[%s:%d, %s][%s] ", __FILE__, __LINE__, __FUNCTION__, ll_name(log_level).c_str()); \
             printf(fmt, ##args);                                                                      \
             printf("\n");                                                                             \
         }                                                                                             \
     } while (false)
+
+#endif

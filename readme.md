@@ -1,29 +1,49 @@
 # lanmai
 lanmai is a key mapping software in Linux.
 
-# mapping keys
-```
-CapsLock => Left Ctrl
-Sapce    => Space
-Sapce e  => Esc
-Space h  => Left
-Space j  => Down
-Space k  => Up
-Space l  => Right
-Space w  => Window
-```
+# features
++ three mapping modes:
+    + single mapping
+    + double mapping, e.g., click CAPSLOCK => ESC, CAPSLOCK + other keys => CTRL + other keys
+    + meta mapping, it can be used to implement [SpaceFn](https://geekhack.org/index.php?topic=51069.0), e.g., click SPACE => SPACE, SPACE + h/j/k/l => Left/Down/Up/Right
++ don't depend X-Window
 
 # dependencies
 + libevdev
 + libudev
 
-# build and run
+# build and install
 ```
+git clone https://github.com/svenFeng/lanmai.git
+cd lanmai
+mkdir build
+cd build
+cmake ..
 make
-sudo ./lanmai
+sudo make install
+```
+
+# usage
+## configuration
+the default config file is /etc/lanmai.json, there existed some useful mappings, you can choose what you want, and change the `enable` to `true`.
+
+## run
+lanmai need run by root user.
+
+when you installed correctly, the etc/lanmai.service has been installed to /usr/lib/systemd/systemd/, so you can manage it by systemd.
+```
+# start
+sudo systemctl start lanmai.service
+# stop
+sudo systemctl stop lanmai.service
+# enable
+sudo systemctl enable lanmai.service
 ```
 
 # TODO
-+ multi keyboard devices
-+ better command arguments parser
+## P0
++ real-time derives detecting and mapping
++ better logger
+
+## P1
 + verify it in Coq/TLA+

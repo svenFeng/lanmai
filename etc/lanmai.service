@@ -1,0 +1,11 @@
+[Unit]
+Description=Lanmai
+Wants=systemd-udev-settle.service
+After=systemd-udev-settle.service
+
+[Service]
+ExecStartPre=sleep 1
+ExecStart=/usr/bin/lanmai
+
+[Install]
+WantedBy=multi-user.target

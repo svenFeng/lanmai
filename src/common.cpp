@@ -1,5 +1,5 @@
-#include "log.h"
-#include "common.h"
+#include "../lib/log.h"
+#include "../lib/common.h"
 #include <libevdev/libevdev-uinput.h>
 #include <libevdev/libevdev.h>
 #include <libudev.h>
@@ -13,7 +13,7 @@ std::vector<std::string> get_devices(const char *dt) {
 
     udev = udev_new();
     if (!udev) {
-        log(LL_ERROR, "Can't create udev.");
+        LLOG(LL_ERROR, "Can't create udev.");
         exit(1);
     }
     enumerate = udev_enumerate_new(udev);
