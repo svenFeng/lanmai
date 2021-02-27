@@ -1,5 +1,5 @@
 BasedOnStyle: Google
-Standard: Cpp11
+Standard: Cpp17
 SortIncludes: false
 SortUsingDeclarations: false
 AccessModifierOffset: -4
