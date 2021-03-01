@@ -3,6 +3,9 @@
 #include <libevdev/libevdev-uinput.h>
 #include <libevdev/libevdev.h>
 #include <libudev.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <functional>
 
 std::vector<std::string> get_devices(const char *dt) {
     std::vector<std::string> devnodes;
@@ -33,4 +36,23 @@ std::vector<std::string> get_devices(const char *dt) {
     udev_enumerate_unref(enumerate);
     udev_unref(udev);
     return devnodes;
+}
+
+void print_all_kbd_devices() {
+    for (auto &&path : get_kbd_devices()) {
+        int fd = open(path.c_str(), O_RDONLY);
+        if (fd < 0) {
+            LLOG(LL_ERROR, "open file:%s failed.", path.c_str());
+            return;
+        }
+        Defer fd_defer{[&]() { close(fd); }};
+
+        libevdev *dev = nullptr;
+        Defer dev_defer{[&]() { libevdev_free(dev); }};
+        if (libevdev_new_from_fd(fd, &dev) < 0) {
+            LLOG(LL_ERROR, "create dev failed");
+            return;
+        }
+        printf("dev: \e[1;34m%s\e[m, name: %s\n", path.c_str(), libevdev_get_name(dev));
+    }
 }

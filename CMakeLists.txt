@@ -11,5 +11,12 @@ target_include_directories(lanmai PUBLIC ./lib /usr/include/libevdev-1.0)
 target_link_libraries(lanmai PUBLIC udev evdev)
 
 install(TARGETS lanmai DESTINATION /usr/bin)
-install(FILES etc/lanmai.json DESTINATION /etc)
-install(FILES etc/lanmai.service DESTINATION /usr/lib/systemd/system)
+install(CODE 
+    "IF(NOT EXISTS /etc/lanmai.json)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/etc/lanmai.json DESTINATION /etc)
+    ENDIF()")
+
+install(CODE 
+    "IF(NOT EXISTS /usr/lib/systemd/system/lanmai.service)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/etc/lanmai.service DESTINATION /usr/lib/systemd/system)
+    ENDIF()")

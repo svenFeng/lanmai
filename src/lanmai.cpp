@@ -33,7 +33,7 @@ void handle_input(const std::string &path, SingleMapper sm, DoubleMapper dm, Met
     }
     Defer fd_defer{[&]() { close(fd); }};
 
-    struct libevdev *dev = nullptr;
+    libevdev *dev = nullptr;
     Defer dev_defer{[&]() { libevdev_free(dev); }};
     if (libevdev_new_from_fd(fd, &dev) < 0) {
         LLOG(LL_ERROR, "create dev failed");
@@ -58,10 +58,6 @@ void handle_input(const std::string &path, SingleMapper sm, DoubleMapper dm, Met
     if (libevdev_uinput_create_from_device(dev, uifd, &uidev) != 0) {
         return;
     }
-
-    bool space_key_pressed = false;
-    bool space_as_mk       = false;
-    int pressed_count      = 0;
 
     while (true) {
         struct input_event input;
@@ -94,7 +90,11 @@ int main(int argc, char *argv[]) {
     GLOBAL_LOG_LEVEL  = args.log_level;
     json cfg          = readConfig(args.configPath);
     auto [sm, dm, mm] = get_mappers(cfg);
-    auto devices      = get_kbd_devices();
+    if (!args.device.empty()) {
+        handle_input(args.device, sm, dm, mm);
+        return 0;
+    }
+    auto devices = get_kbd_devices();
     if (devices.size() == 0) {
         LLOG(LL_ERROR, "can't find out any key board device");
         return 1;

@@ -1,31 +1,32 @@
 #ifndef LANMAI_COMMON_H
 #define LANMAI_COMMON_H
 
-#include <functional>
-#include <string>
-#include <vector>
-#include <variant>
-#include <cassert>
-#include <map>
 #include "err.h"
+#include <cassert>
+#include <functional>
+#include <libevdev/libevdev.h>
+#include <map>
+#include <string>
+#include <variant>
+#include <vector>
+
+#define LANMAI_VERSION "0.1.1"
 
 using uint = unsigned int;
 
 struct Defer {
-    std::function<void()> f;
-    Defer(std::function<void()> f) : f(f) {}
-    ~Defer() { f(); }
+  std::function<void()> f;
+  Defer(std::function<void()> f) : f(f) {}
+  ~Defer() { f(); }
 };
 
 // uinput and udev
 std::vector<std::string> get_devices(const char *dt);
-inline std::vector<std::string> get_kbd_devices() { return get_devices("ID_INPUT_KEYBOARD"); }
-
-inline void print_all_kbd_devices() {
-    for (auto &&d : get_kbd_devices()) {
-        printf("kbd: %s\n", d.c_str());
-    }
+inline std::vector<std::string> get_kbd_devices() {
+  return get_devices("ID_INPUT_KEYBOARD");
 }
+
+void print_all_kbd_devices();
 
 inline std::map<std::string, uint> TABLE = {
     {"RESERVED", 0},
