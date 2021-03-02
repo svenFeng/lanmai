@@ -7,7 +7,7 @@
 
 using json = nlohmann::json;
 
-std::string read_file(const std::string &path);
-json readConfig(const std::string &path);
+std::string read_file(const std::string& path);
+json readConfig(const std::string& path);
 
 #endif

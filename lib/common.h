@@ -15,16 +15,14 @@
 using uint = unsigned int;
 
 struct Defer {
-  std::function<void()> f;
-  Defer(std::function<void()> f) : f(f) {}
-  ~Defer() { f(); }
+    std::function<void()> f;
+    Defer(std::function<void()> f) : f(f) {}
+    ~Defer() { f(); }
 };
 
 // uinput and udev
-std::vector<std::string> get_devices(const char *dt);
-inline std::vector<std::string> get_kbd_devices() {
-  return get_devices("ID_INPUT_KEYBOARD");
-}
+std::vector<std::string> get_devices(const char* dt);
+inline std::vector<std::string> get_kbd_devices() { return get_devices("ID_INPUT_KEYBOARD"); }
 
 void print_all_kbd_devices();
 

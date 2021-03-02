@@ -1,18 +1,18 @@
-#include "../lib/log.h"
 #include "../lib/common.h"
+#include "../lib/log.h"
+#include <fcntl.h>
+#include <functional>
 #include <libevdev/libevdev-uinput.h>
 #include <libevdev/libevdev.h>
 #include <libudev.h>
-#include <fcntl.h>
 #include <unistd.h>
-#include <functional>
 
-std::vector<std::string> get_devices(const char *dt) {
+std::vector<std::string> get_devices(const char* dt) {
     std::vector<std::string> devnodes;
-    struct udev *udev;
-    struct udev_enumerate *enumerate;
+    struct udev* udev;
+    struct udev_enumerate* enumerate;
     struct udev_list_entry *devices, *dev_list_entry;
-    struct udev_device *dev;
+    struct udev_device* dev;
 
     udev = udev_new();
     if (!udev) {
@@ -39,7 +39,7 @@ std::vector<std::string> get_devices(const char *dt) {
 }
 
 void print_all_kbd_devices() {
-    for (auto &&path : get_kbd_devices()) {
+    for (auto&& path : get_kbd_devices()) {
         int fd = open(path.c_str(), O_RDONLY);
         if (fd < 0) {
             LLOG(LL_ERROR, "open file:%s failed.", path.c_str());
@@ -47,7 +47,7 @@ void print_all_kbd_devices() {
         }
         Defer fd_defer{[&]() { close(fd); }};
 
-        libevdev *dev = nullptr;
+        libevdev* dev = nullptr;
         Defer dev_defer{[&]() { libevdev_free(dev); }};
         if (libevdev_new_from_fd(fd, &dev) < 0) {
             LLOG(LL_ERROR, "create dev failed");

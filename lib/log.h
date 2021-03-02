@@ -8,14 +8,14 @@ enum LogLevel : int8_t { LL_ERROR = 0, LL_INFO = 1, LL_DEBUG = 2 };
 
 inline std::string ll_name(LogLevel log_level) {
     switch (log_level) {
-        case LL_ERROR:
-            return "ERROR";
-        case LL_INFO:
-            return "INFO";
-        case LL_DEBUG:
-            return "DEBUG";
-        default:
-            return "NONE";
+    case LL_ERROR:
+        return "ERROR";
+    case LL_INFO:
+        return "INFO";
+    case LL_DEBUG:
+        return "DEBUG";
+    default:
+        return "NONE";
     }
 }
 
