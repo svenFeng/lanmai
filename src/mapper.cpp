@@ -1,7 +1,7 @@
-#include <linux/input.h>
 #include "mapper.h"
-#include "log.h"
 #include "common.h"
+#include "log.h"
+#include <linux/input.h>
 
 input_event SingleMapper::map(input_event input) {
     if (auto it = keys.find(input.code); it != keys.end()) {
@@ -11,13 +11,14 @@ input_event SingleMapper::map(input_event input) {
 }
 
 // pressed_set as used to check a double key whether is a press key,
-//     when a double key and other keys pressed, the key will be treated as a press key.
+//     when a double key and other keys pressed, the key will be treated as a
+//     press key.
 std::list<input_event> DoubleMapper::map(input_event input) {
     std::list<input_event> res;
     if (input.value == 1 && !pressed_set.empty()) {
         for (auto v : pressed_set) {
             auto ni           = input;
-            Info &info        = keys.at(v);
+            Info& info        = keys.at(v);
             info.as_press_key = true;
             ni.code           = info.press_key;
             ni.value          = 1;
@@ -32,7 +33,7 @@ std::list<input_event> DoubleMapper::map(input_event input) {
     }
     if (pressed_set.size() > 1) {
         for (auto v : pressed_set) {
-            Info &info        = keys.at(v);
+            Info& info        = keys.at(v);
             info.as_press_key = true;
             input.code        = info.press_key;
             input.value       = 1;
@@ -40,7 +41,7 @@ std::list<input_event> DoubleMapper::map(input_event input) {
         }
         pressed_set.clear();
     }
-    Info &info = it->second;
+    Info& info = it->second;
     if (input.value == 1) {
         info.pressed = true;
         pressed_set.insert(it->first);
@@ -108,12 +109,12 @@ std::list<input_event> MetaMapper::map(input_event input) {
     return res;
 }
 
-std::tuple<SingleMapper, DoubleMapper, MetaMapper> get_mappers(const nlohmann::json &cfg) {
+std::tuple<SingleMapper, DoubleMapper, MetaMapper> get_mappers(const nlohmann::json& cfg) {
     SingleMapper sm;
     DoubleMapper dm;
     MetaMapper mm;
     if (auto it = cfg.find("mapping"); it != cfg.end()) {
-        for (auto &&[m_name, v] : it->items()) {
+        for (auto&& [m_name, v] : it->items()) {
             auto typ = v.at("type").get<std::string>();
             if (!v.at("enable").get<bool>()) {
                 continue;
@@ -135,7 +136,7 @@ std::tuple<SingleMapper, DoubleMapper, MetaMapper> get_mappers(const nlohmann::j
                 uint key   = TABLE.at(v.at("key").get<std::string>());
                 uint click = TABLE.at(v.at("click").get<std::string>());
                 std::map<uint, uint> meta_keys;
-                for (auto &&[from, to] : v.at("mapping").items()) {
+                for (auto&& [from, to] : v.at("mapping").items()) {
                     uint fv       = TABLE.at(from);
                     uint tv       = TABLE.at(to.get<std::string>());
                     meta_keys[fv] = tv;

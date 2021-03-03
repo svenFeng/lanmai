@@ -8,7 +8,7 @@ struct Args {
     std::string configPath;
     int8_t log_level;
     std::string device;
-    Args(int argc, char *argv[]);
+    Args(int argc, char* argv[]);
 };
 
 #endif

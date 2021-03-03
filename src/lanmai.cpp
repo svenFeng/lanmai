@@ -1,3 +1,8 @@
+#include "args.h"
+#include "common.h"
+#include "config.h"
+#include "log.h"
+#include "mapper.h"
 #include <fcntl.h>
 #include <functional>
 #include <libevdev/libevdev-uinput.h>
@@ -11,21 +16,16 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
-#include "log.h"
-#include "args.h"
-#include "common.h"
-#include "config.h"
-#include "mapper.h"
 
-void send(const libevdev_uinput *uinput_dev, unsigned int type, unsigned int code, int value) {
+void send(const libevdev_uinput* uinput_dev, unsigned int type, unsigned int code, int value) {
     LLOG(LL_DEBUG, "send: type:%d, code:%d, value:%d", type, code, value);
     libevdev_uinput_write_event(uinput_dev, type, code, value);
     libevdev_uinput_write_event(uinput_dev, EV_SYN, SYN_REPORT, 0);
 }
 
-void send(const libevdev_uinput *uinput_dev, input_event e) { send(uinput_dev, e.type, e.code, e.value); }
+void send(const libevdev_uinput* uinput_dev, input_event e) { send(uinput_dev, e.type, e.code, e.value); }
 
-void handle_input(const std::string &path, SingleMapper sm, DoubleMapper dm, MetaMapper mm) {
+void handle_input(const std::string& path, SingleMapper sm, DoubleMapper dm, MetaMapper mm) {
     int fd = open(path.c_str(), O_RDONLY);
     if (fd < 0) {
         LLOG(LL_ERROR, "open file:%s failed.", path.c_str());
@@ -33,7 +33,7 @@ void handle_input(const std::string &path, SingleMapper sm, DoubleMapper dm, Met
     }
     Defer fd_defer{[&]() { close(fd); }};
 
-    libevdev *dev = nullptr;
+    libevdev* dev = nullptr;
     Defer dev_defer{[&]() { libevdev_free(dev); }};
     if (libevdev_new_from_fd(fd, &dev) < 0) {
         LLOG(LL_ERROR, "create dev failed");
@@ -53,7 +53,7 @@ void handle_input(const std::string &path, SingleMapper sm, DoubleMapper dm, Met
     }
     Defer uifd_defer{[&]() { close(uifd); }};
 
-    struct libevdev_uinput *uidev = nullptr;
+    struct libevdev_uinput* uidev = nullptr;
     Defer uidev_defer{[&]() { libevdev_uinput_destroy(uidev); }};
     if (libevdev_uinput_create_from_device(dev, uifd, &uidev) != 0) {
         return;
@@ -85,7 +85,7 @@ void handle_input(const std::string &path, SingleMapper sm, DoubleMapper dm, Met
     }
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     Args args(argc, argv);
     GLOBAL_LOG_LEVEL  = args.log_level;
     json cfg          = readConfig(args.configPath);
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
         LLOG(LL_ERROR, "can't find out any key board device");
         return 1;
     }
-    for (auto &&d : devices) {
+    for (auto&& d : devices) {
         LLOG(LL_INFO, "keyboard device:%s", d.c_str());
     }
     handle_input(devices[0], sm, dm, mm);
