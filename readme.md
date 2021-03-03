@@ -43,10 +43,10 @@ sudo systemctl enable lanmai.service
 ```
 
 ## tips
-1. multi-devices
+### multi-devices
 lanmai don't support grab multi-devices now, if you have more than one keyboards, you can use `--list-kbd-devices` option to find which device you want to grab, and use `-d` option to specify it.
 
-2. grab wrong device
+### grab wrong device
 sometimes mouse(or others) may register as a keyboard, so lanmai may grab it, you can also use `--list-kbd-devices` and `-d` options to avoid that trouble like above.
 
 # TODO
