@@ -28,6 +28,10 @@ Args::Args(int argc, char* argv[]) {
         .help("lanmai version")
         .default_value(false)
         .implicit_value(true);
+    parser.add_argument("--keys")
+        .help("display all key names")
+        .default_value(false)
+        .implicit_value(true);
 
     try {
         parser.parse_args(argc, argv);
@@ -47,7 +51,12 @@ Args::Args(int argc, char* argv[]) {
         exit(0);
     }
 
-    configPath     = parser.get<std::string>("-c");
+    if (parser.get<bool>("--keys")) {
+        print_all_keys();
+        exit(0);
+    }
+
+    config_path     = parser.get<std::string>("-c");
     device         = parser.get<std::string>("-d");
     std::string ll = parser.get<std::string>("-l");
     if (ll == "DEBUG") {

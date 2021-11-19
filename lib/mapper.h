@@ -1,5 +1,4 @@
-#ifndef LANMAI_MAPPER_H
-#define LANMAI_MAPPER_H
+#pragma once
 
 #include "common.h"
 #include "third_party/json.hpp"
@@ -58,5 +57,3 @@ class MetaMapper {
 };
 
 std::tuple<SingleMapper, DoubleMapper, MetaMapper> get_mappers(const nlohmann::json& cfg);
-
-#endif

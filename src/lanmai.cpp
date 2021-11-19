@@ -88,7 +88,7 @@ void handle_input(const std::string& path, SingleMapper sm, DoubleMapper dm, Met
 int main(int argc, char* argv[]) {
     Args args(argc, argv);
     GLOBAL_LOG_LEVEL  = args.log_level;
-    json cfg          = readConfig(args.configPath);
+    json cfg          = readConfig(args.config_path);
     auto [sm, dm, mm] = get_mappers(cfg);
     if (!args.device.empty()) {
         handle_input(args.device, sm, dm, mm);

@@ -1,5 +1,4 @@
-#ifndef LANMAI_LOG_H
-#define LANMAI_LOG_H
+#pragma once
 
 #include <string>
 
@@ -27,5 +26,3 @@ inline std::string ll_name(LogLevel log_level) {
             printf("\n");                                                                             \
         }                                                                                             \
     } while (false)
-
-#endif

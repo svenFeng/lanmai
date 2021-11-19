@@ -56,3 +56,10 @@ void print_all_kbd_devices() {
         printf("dev: \e[1;34m%s\e[m, name: %s\n", path.c_str(), libevdev_get_name(dev));
     }
 }
+
+void print_all_keys() {
+    printf("keys:\n");
+    for (auto&& [code, key] : TABLE_REV) {
+        printf("\t%s\n", key.c_str());
+    }
+}

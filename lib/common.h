@@ -1,5 +1,4 @@
-#ifndef LANMAI_COMMON_H
-#define LANMAI_COMMON_H
+#pragma once
 
 #include "err.h"
 #include <cassert>
@@ -25,8 +24,9 @@ std::vector<std::string> get_devices(const char* dt);
 inline std::vector<std::string> get_kbd_devices() { return get_devices("ID_INPUT_KEYBOARD"); }
 
 void print_all_kbd_devices();
+void print_all_keys();
 
-inline std::map<std::string, uint> TABLE = {
+inline const std::map<std::string, uint> TABLE = {
     {"RESERVED", 0},
     {"ESC", 1},
     {"1", 2},
@@ -272,7 +272,7 @@ inline std::map<std::string, uint> TABLE = {
     {"MICMUTE", 248},
 };
 
-inline std::map<uint, std::string> TABLE_REV = {
+inline const std::map<uint, std::string> TABLE_REV = {
     {0, "RESERVED"},
     {1, "ESC"},
     {2, "1"},
@@ -517,5 +517,3 @@ inline std::map<uint, std::string> TABLE_REV = {
     {247, "RFKILL"},
     {248, "MICMUTE"},
 };
-
-#endif

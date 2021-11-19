@@ -1,5 +1,4 @@
-#ifndef LANMAI_ERR_H
-#define LANMAI_ERR_H
+#pragma once
 
 enum ErrCode : int {
     // IO
@@ -7,5 +6,3 @@ enum ErrCode : int {
     // Config
     PARSE_JSON_ERROR = 0x100,
 };
-
-#endif
