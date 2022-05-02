@@ -73,6 +73,7 @@ void handle_input(const std::string& path, SingleMapper sm, DoubleMapper dm, Met
         }
 
         if (input.type != EV_KEY) {
+            send(uidev, input);
             continue;
         }
         LLOG(LL_DEBUG, "accept key: type:%d, code:%d, value:%d", input.type, input.code, input.value);

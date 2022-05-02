@@ -9,7 +9,7 @@
 #include <variant>
 #include <vector>
 
-#define LANMAI_VERSION "0.1.1"
+#define LANMAI_VERSION "0.1.2"
 
 using uint = unsigned int;
 
