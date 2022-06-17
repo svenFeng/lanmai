@@ -1,6 +1,3 @@
-#ifndef LANMAI_COMMOON_H
-#define LANMAI_COMMOON_H
-
 #include "config.h"
 #include "common.h"
 #include "err.h"
@@ -31,5 +28,3 @@ std::string read_file(const std::string& path) {
 }
 
 json readConfig(const std::string& path) { return json::parse(read_file(path)); }
-
-#endif
